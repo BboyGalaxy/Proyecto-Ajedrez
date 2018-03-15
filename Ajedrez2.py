@@ -52,26 +52,26 @@ class Reina(Pieza):
 class Chess_Board():
 
 	def __init__(self):
-		Tablero = []
-		Columnas = []
-		Filas = []
+		self.Tablero = []
+		self.Columnas = []
+		self.Filas = []
 
 	def draw_chess_board(self,Ventana,Dimension):
 		Color = 0
 		for Fila in range(8):
 			for Columna in range(8):
 				X,Y = Fila * Dimension, Columna * Dimension
-				Columnas = [X,Y]
-				Filas.append(Columnas)
-				Columnas = []
+				self.Columnas = [X,Y]
+				self.Filas.append(self.Columnas)
+				self.Columnas = []
 				if Color % 2 == 0:
 					pygame.draw.rect(Ventana,Negro,(X,Y,Dimension,Dimension))
 				else:
 					pygame.draw.rect(Ventana,Blanco,(X,Y,Dimension,Dimension))
 				Color += 1
 			Color += 1
-			Tablero.append(Filas)
-			Filas = []
+			self.Tablero.append(self.Filas)
+			self.Filas = []
 
 #peon = pygame.image.load("Imagenes/Peon_Blanco.png")
 
