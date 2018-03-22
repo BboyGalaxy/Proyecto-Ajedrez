@@ -36,11 +36,14 @@ class Peon(Pieza):
 			self.fila = 0
 			self.columna = 3
 		self.finding_move = False
+
+		#chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
 		
 	def draw_piece(self):
 		fila = chess.tablero[self.fila]
 		coordenadas = fila[self.columna]
 		Ventana.blit(self.image, coordenadas)
+		chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
 
 	def move(self):
 		pass
@@ -60,19 +63,7 @@ class Peon(Pieza):
 		pygame.draw.rect(Ventana, color_objetivo, (coordenadas[0], coordenadas[1], 70, 70))
 		print coordenadas
 
-	def find_piece(self, posX, posY):
-		filas = chess.tablero[self.fila]
-		coordenadas = filas[self.columna]
-
-		if posX >= coordenadas[0] and posX <= coordenadas[0] + 70:
-			if posY >= coordenadas[1] and posY <= coordenadas[1] + 70:
-				if self.finding_move == False:
-					self.finding_move = True
-					self.find_move()
-					print self.finding_move
-				else:
-					self.finding_move = False
-					print self.finding_move
+	
 		
 
 class Caballo(Pieza):
@@ -97,31 +88,44 @@ class ChessBoard():
 
 	def __init__(self):
 		self.tablero = []
-		self.columnas = []
-		self.filas = []
+		self.piezas = []
 
 	def draw_chess_board(self, ventana, dimension):
 		Color = 0
+		filas = [] 
 		for Fila in range(8):
 			for Columna in range(8):
 				X,Y = Columna * dimension, Fila * dimension
-				self.columnas = [X, Y]
-				self.filas.append(self.columnas)
-				self.columnas = []
+				filas.append([X, Y])
 				if Color % 2 == 0:
-					pygame.draw.rect(ventana, Negro, (X, Y, dimension, dimension))
-				else:
 					pygame.draw.rect(ventana, Blanco, (X, Y, dimension, dimension))
+				else:
+					pygame.draw.rect(ventana, Negro, (X, Y, dimension, dimension))
 				Color += 1
 			Color += 1
-			self.tablero.append(self.filas)
-			self.filas = []
+			self.tablero.append(filas)
+			filas = []
 
-	
+	def find_piece(self, posX, posY):
+		for count in self.piezas:
+			coordenadas = count[1]
+			if posX >= coordenadas[0] and posX <= coordenadas[0] + 70:
+				if posY >= coordenadas[1] and posY <= coordenadas[1] + 70:
+					if count[0].finding_move == False:
+						count[0].finding_move = True
+						count[0].find_move()
+						print count[0].finding_move
+						break
+					else:
+						self.finding_move = False
+						print count[0].finding_move
+						break
 
 
 chess = ChessBoard()
 peon1 = Peon("peon1","Blanco")
+
+
 
 while True:
 	for evento in pygame.event.get():
@@ -130,10 +134,10 @@ while True:
 			sys.exit()
 		elif evento.type == MOUSEBUTTONDOWN:
 			posX,posY = pygame.mouse.get_pos()
-			peon1.find_piece(posX, posY)
+			chess.find_piece(posX, posY)
 
 	chess.draw_chess_board(Ventana, 70)
 	peon1.draw_piece()
-	pygame.draw.rect(Ventana, (255,255,50), (210, 420, 70, 70))
+	
 	pygame.display.update()
 
