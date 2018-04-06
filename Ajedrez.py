@@ -51,6 +51,9 @@ class Peon(Pieza):
 		self.draw_piece()
 		self.finding_move = False
 
+		chess.piezas = []
+		chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
+
 	def find_move(self):
 		print "buscando movimiento"
 		if self.color == "Blanco":
@@ -93,10 +96,15 @@ class Caballo(Pieza):
 		self.draw_piece()
 		self.finding_move = False
 
+		chess.piezas = []
+		chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
+
 	def draw_piece(self):
 		coordenadas = chess.tablero[self.fila][self.columna]
 		Ventana.blit(self.image, coordenadas)
 		chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
+
+		
 
 	def find_move(self):
 		print "buscando movimiento"
@@ -124,6 +132,7 @@ class Caballo(Pieza):
 			if self.fila + 1 < 8:
 				piece_objetivos.objetivos.append([self,[self.fila + 1,self.columna + 2]])
 
+
 class Reina(Pieza):
 
 	def __init__(self, nombre, color):
@@ -141,8 +150,15 @@ class Reina(Pieza):
 			self.columna = 5
 		self.finding_move = False
 
-	def move(self):
-		pass
+	def move(self,coordenadas):
+		print "se movio"
+		self.fila = coordenadas[0]
+		self.columna = coordenadas[1]
+		self.draw_piece()
+		self.finding_move = False
+
+		chess.piezas = []
+		chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
 
 	def draw_piece(self):
 		coordenadas = chess.tablero[self.fila][self.columna]
@@ -151,6 +167,22 @@ class Reina(Pieza):
 
 	def find_move(self):
 		print "buscando movimiento"
+		for count in range(8):
+			if count != self.columna:
+				piece_objetivos.objetivos.append([self,[self.fila,count]])
+			if count != self.fila:
+				piece_objetivos.objetivos.append([self,[count,self.columna]])
+		for counter in range(1,9):
+			if self.columna + counter < 8:
+				if self.fila - counter  > -1:
+					piece_objetivos.objetivos.append([self,[self.fila - counter, self.columna + counter]])
+				if self.fila + counter < 8:
+					piece_objetivos.objetivos.append([self,[self.fila + counter, self.columna + counter]])
+			if self.columna - counter > -1:
+				if self.fila - counter  > -1:
+					piece_objetivos.objetivos.append([self,[self.fila - counter, self.columna - counter]])
+				if self.fila + counter < 8:
+					piece_objetivos.objetivos.append([self,[self.fila + counter, self.columna - counter]])
 
 class ChessBoard():
 
@@ -226,8 +258,8 @@ while True:
 			
 
 	chess.draw_chess_board(Ventana, 70)
-	peon1.draw_piece()
-	#caballo1.draw_piece()
+	#peon1.draw_piece()
+	caballo1.draw_piece()
 	#reina1.draw_piece()
 
 	if len(piece_objetivos.objetivos) > 0:
