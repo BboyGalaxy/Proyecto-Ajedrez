@@ -56,12 +56,17 @@ class Peon(Pieza):
 
 	def find_move(self):
 		print "buscando movimiento"
+		new_fila = self.fila 
+		new_columna = self.columna
+	
+
 		if self.color == "Blanco":
-			new_fila = self.fila - 1
-			new_columna = self.columna
+			if self.fila > 0:
+				new_fila = self.fila - 1
+
 		else:
-			new_fila = self.fila + 1
-			new_columna = self.columna
+			if self.fila < 7:
+				new_fila = self.fila + 1
 
 		coordenadas = chess.tablero[new_fila][new_columna]
 		#color_objetivo = (255, 255, 50)
@@ -235,11 +240,11 @@ class Objetivo():
 
 	def __init__(self):
 		self.objetivos = []
-		self.color_objetivo = (255, 255, 50)
+		self.image = pygame.image.load("Imagenes/Objetivo.png")
 
 
 chess = ChessBoard()
-peon1 = Peon("peon1","Blanco")
+peon1 = Peon("peon1","Blano")
 caballo1 = Caballo("caballo1","Blanco")
 reina1 = Reina("reina1","Blanco")
 piece_objetivos = Objetivo()
@@ -259,13 +264,13 @@ while True:
 
 	chess.draw_chess_board(Ventana, 70)
 	#peon1.draw_piece()
-	caballo1.draw_piece()
-	#reina1.draw_piece()
+	#caballo1.draw_piece()
+	reina1.draw_piece()
 
 	if len(piece_objetivos.objetivos) > 0:
 		for count in piece_objetivos.objetivos:
 			coordenadas = chess.tablero[count[1][0]][count[1][1]]
-			pygame.draw.rect(Ventana, piece_objetivos.color_objetivo, (coordenadas[0],coordenadas[1], 70, 70))
+			Ventana.blit(piece_objetivos.image, (coordenadas[0],coordenadas[1], 70, 70))
 
 	
 	pygame.display.update()
