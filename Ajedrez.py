@@ -15,10 +15,16 @@ class Pieza():
 	def __init__(self, nombre, color):
 		self.nombre = nombre
 		self.color = color
+		self.objetivos = []
+		self.image_objetivos = pygame.image.load("Imagenes/Objetivo.png")
 
 	def move(self):
 		pass
 
+	def change_position(self, piece, posX, posY):
+		for count in chess.piezas:
+			if count[0].nombre == piece.nombre:
+				count[1] = chess.tablero[posX][posY]
 
 class Peon(Pieza):
 
@@ -36,23 +42,20 @@ class Peon(Pieza):
 			self.fila = 0
 			self.columna = 3
 		self.finding_move = False
-
-		#chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
+		chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
 		
 	def draw_piece(self):
 		coordenadas = chess.tablero[self.fila][self.columna]
 		Ventana.blit(self.image, coordenadas)
-		chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
+		
 
 	def move(self,coordenadas):
 		print "se movio"
 		self.fila = coordenadas[0]
 		self.columna = coordenadas[1]
-		self.draw_piece()
 		self.finding_move = False
 
-		chess.piezas = []
-		chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
+		self.change_position(self,self.fila,self.columna)
 
 	def find_move(self):
 		print "buscando movimiento"
@@ -71,7 +74,7 @@ class Peon(Pieza):
 		coordenadas = chess.tablero[new_fila][new_columna]
 		#color_objetivo = (255, 255, 50)
 		#piece_objetivos.objetivos.append([self,coordenadas]) ----- original
-		piece_objetivos.objetivos.append([self,[new_fila,new_columna]])
+		self.objetivos.append([self,[new_fila,new_columna]])
 		#return [self,coordenadas]
 
 	
@@ -93,21 +96,20 @@ class Caballo(Pieza):
 			self.fila = 0
 			self.columna = 4
 		self.finding_move = False
+		chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
 
 	def move(self,coordenadas):
 		print "se movio"
 		self.fila = coordenadas[0]
 		self.columna = coordenadas[1]
-		self.draw_piece()
 		self.finding_move = False
 
-		chess.piezas = []
-		chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
+		self.change_position(self,self.fila,self.columna)
 
 	def draw_piece(self):
 		coordenadas = chess.tablero[self.fila][self.columna]
 		Ventana.blit(self.image, coordenadas)
-		chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
+		
 
 		
 
@@ -115,27 +117,27 @@ class Caballo(Pieza):
 		print "buscando movimiento"
 		if self.fila - 2 > -1:
 			if self.columna - 1 > -1:
-				piece_objetivos.objetivos.append([self,[self.fila - 2,self.columna - 1]])
+				self.objetivos.append([self,[self.fila - 2,self.columna - 1]])
 			if self.columna + 1 < 8:
-				piece_objetivos.objetivos.append([self,[self.fila - 2,self.columna + 1]])
+				self.objetivos.append([self,[self.fila - 2,self.columna + 1]])
 
 		if self.fila + 2 < 8:
 			if self.columna - 1 > -1:
-				piece_objetivos.objetivos.append([self,[self.fila + 2,self.columna - 1]])
+				self.objetivos.append([self,[self.fila + 2,self.columna - 1]])
 			if self.columna + 1 < 8:
-				piece_objetivos.objetivos.append([self,[self.fila + 2,self.columna + 1]])
+				self.objetivos.append([self,[self.fila + 2,self.columna + 1]])
 
 		if self.columna - 2 > -1:
 			if self.fila - 1 > -1:
-				piece_objetivos.objetivos.append([self,[self.fila - 1,self.columna - 2]])
+				self.objetivos.append([self,[self.fila - 1,self.columna - 2]])
 			if self.fila + 1 < 8:
-				piece_objetivos.objetivos.append([self,[self.fila + 1,self.columna - 2]])
+				self.objetivos.append([self,[self.fila + 1,self.columna - 2]])
 
 		if self.columna + 2 < 8:
 			if self.fila - 1 > -1:
-				piece_objetivos.objetivos.append([self,[self.fila - 1,self.columna + 2]])
+				self.objetivos.append([self,[self.fila - 1,self.columna + 2]])
 			if self.fila + 1 < 8:
-				piece_objetivos.objetivos.append([self,[self.fila + 1,self.columna + 2]])
+				self.objetivos.append([self,[self.fila + 1,self.columna + 2]])
 
 
 class Reina(Pieza):
@@ -154,40 +156,39 @@ class Reina(Pieza):
 			self.fila = 0
 			self.columna = 5
 		self.finding_move = False
+		chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
 
 	def move(self,coordenadas):
 		print "se movio"
 		self.fila = coordenadas[0]
 		self.columna = coordenadas[1]
-		self.draw_piece()
 		self.finding_move = False
 
-		chess.piezas = []
-		chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
+		self.change_position(self,self.fila,self.columna)
 
 	def draw_piece(self):
 		coordenadas = chess.tablero[self.fila][self.columna]
 		Ventana.blit(self.image, coordenadas)
-		chess.piezas.append([self,chess.tablero[self.fila][self.columna]])
+		
 
 	def find_move(self):
 		print "buscando movimiento"
 		for count in range(8):
 			if count != self.columna:
-				piece_objetivos.objetivos.append([self,[self.fila,count]])
+				self.objetivos.append([self,[self.fila,count]])
 			if count != self.fila:
-				piece_objetivos.objetivos.append([self,[count,self.columna]])
+				self.objetivos.append([self,[count,self.columna]])
 		for counter in range(1,9):
 			if self.columna + counter < 8:
 				if self.fila - counter  > -1:
-					piece_objetivos.objetivos.append([self,[self.fila - counter, self.columna + counter]])
+					self.objetivos.append([self,[self.fila - counter, self.columna + counter]])
 				if self.fila + counter < 8:
-					piece_objetivos.objetivos.append([self,[self.fila + counter, self.columna + counter]])
+					self.objetivos.append([self,[self.fila + counter, self.columna + counter]])
 			if self.columna - counter > -1:
 				if self.fila - counter  > -1:
-					piece_objetivos.objetivos.append([self,[self.fila - counter, self.columna - counter]])
+					self.objetivos.append([self,[self.fila - counter, self.columna - counter]])
 				if self.fila + counter < 8:
-					piece_objetivos.objetivos.append([self,[self.fila + counter, self.columna - counter]])
+					self.objetivos.append([self,[self.fila + counter, self.columna - counter]])
 
 class ChessBoard():
 
@@ -223,17 +224,19 @@ class ChessBoard():
 						break
 					else:
 						count[0].finding_move = False
-						piece_objetivos.objetivos = []
+						count[0].objetivos = []
 						print count[0].finding_move
 						break
 
 	def find_objetivos(self, posX, posY):
-		for count in piece_objetivos.objetivos:
-			coordenadas = self.tablero[count[1][0]][count[1][1]]
-			if posX >= coordenadas[0] and posX <= coordenadas[0] + 70:
-				if posY >= coordenadas[1] and posY <= coordenadas[1] + 70:
-					count[0].move(count[1])
-					piece_objetivos.objetivos = []
+		for pieza in self.piezas:
+			if len(pieza[0].objetivos) > 0 :
+				for count in pieza[0].objetivos:
+					coordenadas = self.tablero[count[1][0]][count[1][1]]
+					if posX >= coordenadas[0] and posX <= coordenadas[0] + 70:
+						if posY >= coordenadas[1] and posY <= coordenadas[1] + 70:
+							count[0].move(count[1])
+							count[0].objetivos = []
 
 
 class Objetivo():
@@ -244,7 +247,8 @@ class Objetivo():
 
 
 chess = ChessBoard()
-peon1 = Peon("peon1","Blano")
+chess.draw_chess_board(Ventana, 70)
+peon1 = Peon("peon1","Blanco")
 caballo1 = Caballo("caballo1","Blanco")
 reina1 = Reina("reina1","Blanco")
 piece_objetivos = Objetivo()
@@ -257,21 +261,26 @@ while True:
 			pygame.quit()
 			sys.exit()
 		elif evento.type == MOUSEBUTTONDOWN:
-			posX,posY = pygame.mouse.get_pos()
-			chess.find_piece(posX, posY)
-			chess.find_objetivos(posX, posY)
-			
+			if evento.button == 1:
+				posX,posY = pygame.mouse.get_pos()
+				chess.find_piece(posX, posY)
+				chess.find_objetivos(posX, posY)
+			elif evento.button == 3:
+				print "Elegir pieza"
+
 
 	chess.draw_chess_board(Ventana, 70)
 	#peon1.draw_piece()
-	#caballo1.draw_piece()
-	reina1.draw_piece()
+	caballo1.draw_piece()
+	#reina1.draw_piece()
 
-	if len(piece_objetivos.objetivos) > 0:
-		for count in piece_objetivos.objetivos:
-			coordenadas = chess.tablero[count[1][0]][count[1][1]]
-			Ventana.blit(piece_objetivos.image, (coordenadas[0],coordenadas[1], 70, 70))
+	if len(chess.piezas) > 0:
+		for count in chess.piezas:
+			if len(count[0].objetivos) > 0:
+				for objetives in count[0].objetivos:
+					coordenadas = chess.tablero[objetives[1][0]][objetives[1][1]]
+					Ventana.blit(piece_objetivos.image, (coordenadas[0],coordenadas[1], 70, 70))
 
-	
+	print len(chess.piezas)
 	pygame.display.update()
 
