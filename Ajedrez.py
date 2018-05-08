@@ -21,10 +21,23 @@ class Pieza():
 	def move(self):
 		pass
 
-	def change_position(self, piece, posX, posY):
+	def change_position(self, posX, posY):
 		for count in chess.piezas:
-			if count[0].nombre == piece.nombre:
+			if count[0].nombre == self.nombre:
 				count[1] = chess.tablero[posX][posY]
+
+	def verify_colision(self, fila, columna):
+		position_ocuped = False
+		for count in chess.piezas:
+			if count[1] == chess.tablero[fila][columna]:
+				position_ocuped = True
+		return position_ocuped
+
+	def change_behavior(self):
+		for count in chess.piezas:
+			if count[0].nombre != self.nombre:
+				count[0].finding_move = False
+				count[0].objetivos = []
 
 class Peon(Pieza):
 
@@ -55,9 +68,10 @@ class Peon(Pieza):
 		self.columna = coordenadas[1]
 		self.finding_move = False
 
-		self.change_position(self,self.fila,self.columna)
+		self.change_position(self.fila,self.columna)
 
 	def find_move(self):
+		self.change_behavior()
 		print "buscando movimiento"
 		new_fila = self.fila 
 		new_columna = self.columna
@@ -71,11 +85,11 @@ class Peon(Pieza):
 			if self.fila < 7:
 				new_fila = self.fila + 1
 
-		coordenadas = chess.tablero[new_fila][new_columna]
-		#color_objetivo = (255, 255, 50)
-		#piece_objetivos.objetivos.append([self,coordenadas]) ----- original
-		self.objetivos.append([self,[new_fila,new_columna]])
-		#return [self,coordenadas]
+		if self.verify_colision(new_fila, new_columna) == False:
+			coordenadas = chess.tablero[new_fila][new_columna]
+			
+			self.objetivos.append([self,[new_fila,new_columna]])
+
 
 	
 		
@@ -104,7 +118,7 @@ class Caballo(Pieza):
 		self.columna = coordenadas[1]
 		self.finding_move = False
 
-		self.change_position(self,self.fila,self.columna)
+		self.change_position(self.fila, self.columna)
 
 	def draw_piece(self):
 		coordenadas = chess.tablero[self.fila][self.columna]
@@ -114,30 +128,39 @@ class Caballo(Pieza):
 		
 
 	def find_move(self):
+		self.change_behavior()
 		print "buscando movimiento"
 		if self.fila - 2 > -1:
 			if self.columna - 1 > -1:
-				self.objetivos.append([self,[self.fila - 2,self.columna - 1]])
+				if self.verify_colision(self.fila - 2, self.columna - 1) == False:
+					self.objetivos.append([self,[self.fila - 2,self.columna - 1]])
 			if self.columna + 1 < 8:
-				self.objetivos.append([self,[self.fila - 2,self.columna + 1]])
+				if self.verify_colision(self.fila - 2, self.columna + 1) == False:
+					self.objetivos.append([self,[self.fila - 2,self.columna + 1]])
 
 		if self.fila + 2 < 8:
 			if self.columna - 1 > -1:
-				self.objetivos.append([self,[self.fila + 2,self.columna - 1]])
+				if self.verify_colision(self.fila + 2 , self.columna - 1) == False:
+					self.objetivos.append([self,[self.fila + 2,self.columna - 1]])
 			if self.columna + 1 < 8:
-				self.objetivos.append([self,[self.fila + 2,self.columna + 1]])
+				if self.verify_colision(self.fila + 2, self.columna + 1) == False:
+					self.objetivos.append([self,[self.fila + 2,self.columna + 1]])
 
 		if self.columna - 2 > -1:
 			if self.fila - 1 > -1:
-				self.objetivos.append([self,[self.fila - 1,self.columna - 2]])
+				if self.verify_colision(self.fila - 1, self.columna - 2) == False:
+					self.objetivos.append([self,[self.fila - 1,self.columna - 2]])
 			if self.fila + 1 < 8:
-				self.objetivos.append([self,[self.fila + 1,self.columna - 2]])
+				if self.verify_colision(self.fila + 1, self.columna - 2) == False:
+					self.objetivos.append([self,[self.fila + 1,self.columna - 2]])
 
 		if self.columna + 2 < 8:
 			if self.fila - 1 > -1:
-				self.objetivos.append([self,[self.fila - 1,self.columna + 2]])
+				if self.verify_colision(self.fila - 1, self.columna + 2) == False:
+					self.objetivos.append([self,[self.fila - 1,self.columna + 2]])
 			if self.fila + 1 < 8:
-				self.objetivos.append([self,[self.fila + 1,self.columna + 2]])
+				if self.verify_colision(self.fila + 1, self.columna + 2) == False:
+					self.objetivos.append([self,[self.fila + 1,self.columna + 2]])
 
 
 class Reina(Pieza):
@@ -164,7 +187,7 @@ class Reina(Pieza):
 		self.columna = coordenadas[1]
 		self.finding_move = False
 
-		self.change_position(self,self.fila,self.columna)
+		self.change_position(self.fila, self.columna)
 
 	def draw_piece(self):
 		coordenadas = chess.tablero[self.fila][self.columna]
@@ -172,7 +195,11 @@ class Reina(Pieza):
 		
 
 	def find_move(self):
+		self.change_behavior()
 		print "buscando movimiento"
+
+		### hacer recorrido por cada posible ruta de movimiento para parar los objetivos en cuanto encuentre una colision (8 en total)
+
 		for count in range(8):
 			if count != self.columna:
 				self.objetivos.append([self,[self.fila,count]])
@@ -239,19 +266,15 @@ class ChessBoard():
 							count[0].objetivos = []
 
 
-class Objetivo():
-
-	def __init__(self):
-		self.objetivos = []
-		self.image = pygame.image.load("Imagenes/Objetivo.png")
 
 
 chess = ChessBoard()
 chess.draw_chess_board(Ventana, 70)
-peon1 = Peon("peon1","Blanco")
-caballo1 = Caballo("caballo1","Blanco")
+#peon1 = Peon("peon1","Blanco")
+#peon2 = Peon("peon2","s")
+#caballo1 = Caballo("caballo1","Blanco")
 reina1 = Reina("reina1","Blanco")
-piece_objetivos = Objetivo()
+
 
 
 
@@ -271,15 +294,16 @@ while True:
 
 	chess.draw_chess_board(Ventana, 70)
 	#peon1.draw_piece()
-	caballo1.draw_piece()
-	#reina1.draw_piece()
+	#peon2.draw_piece()
+	#caballo1.draw_piece()
+	reina1.draw_piece()
 
 	if len(chess.piezas) > 0:
 		for count in chess.piezas:
 			if len(count[0].objetivos) > 0:
 				for objetives in count[0].objetivos:
 					coordenadas = chess.tablero[objetives[1][0]][objetives[1][1]]
-					Ventana.blit(piece_objetivos.image, (coordenadas[0],coordenadas[1], 70, 70))
+					Ventana.blit(count[0].image_objetivos, (coordenadas[0],coordenadas[1], 70, 70))
 
 	print len(chess.piezas)
 	pygame.display.update()
