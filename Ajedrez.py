@@ -200,22 +200,91 @@ class Reina(Pieza):
 
 		### hacer recorrido por cada posible ruta de movimiento para parar los objetivos en cuanto encuentre una colision (8 en total)
 
-		for count in range(8):
-			if count != self.columna:
-				self.objetivos.append([self,[self.fila,count]])
-			if count != self.fila:
-				self.objetivos.append([self,[count,self.columna]])
-		for counter in range(1,9):
-			if self.columna + counter < 8:
-				if self.fila - counter  > -1:
-					self.objetivos.append([self,[self.fila - counter, self.columna + counter]])
-				if self.fila + counter < 8:
-					self.objetivos.append([self,[self.fila + counter, self.columna + counter]])
-			if self.columna - counter > -1:
-				if self.fila - counter  > -1:
-					self.objetivos.append([self,[self.fila - counter, self.columna - counter]])
-				if self.fila + counter < 8:
-					self.objetivos.append([self,[self.fila + counter, self.columna - counter]])
+		for count in range(self.fila + 1,8):
+			if self.verify_colision(count,self.columna) == False:
+				self.objetivos.append([self,[count, self.columna]])
+			else:
+				break
+
+		count = self.fila - 1
+		while(count > -1):
+			if self.verify_colision(count,self.columna) == False:
+				self.objetivos.append([self,[count, self.columna]])
+			else:
+				break
+			count -= 1
+
+		for count in range(self.columna + 1 , 8):
+			if self.verify_colision(self.fila,count) == False:
+				self.objetivos.append([self,[self.fila, count]])
+			else:
+				break
+
+		count = self.columna - 1
+		while(count > -1):
+			if self.verify_colision(self.fila,count) == False:
+				self.objetivos.append([self,[self.fila, count]])
+			else:
+				break
+			count -= 1
+
+		fila_objetivo = self.fila
+		for count in range(self.columna + 1 , 8):
+			fila_objetivo -= 1
+			if fila_objetivo > -1:
+				if self.verify_colision(fila_objetivo, count) == False:
+					self.objetivos.append([self,[fila_objetivo, count]])
+				else:
+					break
+
+		fila_objetivo = self.fila
+		for count in range(self.columna + 1 , 8):
+			fila_objetivo += 1
+			if fila_objetivo < 8:
+				if self.verify_colision(fila_objetivo, count) == False:
+					self.objetivos.append([self,[fila_objetivo, count]])
+				else:
+					break
+
+		fila_objetivo = self.fila
+		count = self.columna - 1
+		while(count > -1):
+			fila_objetivo -= 1
+			if fila_objetivo > -1:
+				if self.verify_colision(fila_objetivo, count) == False:
+					self.objetivos.append([self,[fila_objetivo, count]])
+				else:
+					break
+			count -= 1
+
+		fila_objetivo = self.fila
+		count = self.columna - 1
+		while(count > -1):
+			fila_objetivo += 1
+			if fila_objetivo < 8:
+				if self.verify_colision(fila_objetivo, count) == False:
+					self.objetivos.append([self,[fila_objetivo, count]])
+				else:
+					break
+			count -= 1
+		##########################################
+
+		#for count in range(8):
+		#	if count != self.columna:
+		#		self.objetivos.append([self,[self.fila,count]])
+		#	if count != self.fila:
+		#		self.objetivos.append([self,[count,self.columna]])
+		#for counter in range(1,9):
+		#	if self.columna + counter < 8:
+		#		if self.fila - counter  > -1:
+		#			self.objetivos.append([self,[self.fila - counter, self.columna + counter]])
+		#		if self.fila + counter < 8:
+		#			self.objetivos.append([self,[self.fila + counter, self.columna + counter]])
+		#	if self.columna - counter > -1:
+		#		if self.fila - counter  > -1:
+		#			self.objetivos.append([self,[self.fila - counter, self.columna - counter]])
+		#		if self.fila + counter < 8:
+		#			self.objetivos.append([self,[self.fila + counter, self.columna - counter]])
 
 class ChessBoard():
 
@@ -270,9 +339,9 @@ class ChessBoard():
 
 chess = ChessBoard()
 chess.draw_chess_board(Ventana, 70)
-#peon1 = Peon("peon1","Blanco")
+peon1 = Peon("peon1","Blanco")
 #peon2 = Peon("peon2","s")
-#caballo1 = Caballo("caballo1","Blanco")
+caballo1 = Caballo("caballo1","Blanco")
 reina1 = Reina("reina1","Blanco")
 
 
@@ -293,9 +362,9 @@ while True:
 
 
 	chess.draw_chess_board(Ventana, 70)
-	#peon1.draw_piece()
+	peon1.draw_piece()
 	#peon2.draw_piece()
-	#caballo1.draw_piece()
+	caballo1.draw_piece()
 	reina1.draw_piece()
 
 	if len(chess.piezas) > 0:
