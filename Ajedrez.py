@@ -9,11 +9,13 @@ pygame.display.set_caption("Ajedrez")
 Negro = (0, 0, 0)
 Blanco = (255, 255, 255)
 
+fuente = pygame.font.Font(None, 50)
+texto = fuente.render('Elija una pieza', 1, (255, 255, 255))
 
 class Pieza():
 
-	def __init__(self, nombre, color):
-		self.nombre = nombre
+	def __init__(self, color):
+
 		self.color = color
 		self.objetivos = []
 		self.image_objetivos = pygame.image.load("Imagenes/Objetivo.png")
@@ -23,7 +25,7 @@ class Pieza():
 
 	def change_position(self, posX, posY):
 		for count in chess.piezas:
-			if count[0].nombre == self.nombre:
+			if count[0] == self:
 				count[1] = chess.tablero[posX][posY]
 
 	def verify_colision(self, fila, columna):
@@ -35,19 +37,19 @@ class Pieza():
 
 	def change_behavior(self):
 		for count in chess.piezas:
-			if count[0].nombre != self.nombre:
+			if count[0] != self:
 				count[0].finding_move = False
 				count[0].objetivos = []
 
 class Peon(Pieza):
 
-	def __init__(self, nombre, color):
-		Pieza.__init__(self, nombre, color)
+	def __init__(self, color, fila, columna):
+		Pieza.__init__(self, color)
 		if self.color == "Blanco":
 			self.image = pygame.image.load("Imagenes/Peon_Blanco.png")
 			self.image = pygame.transform.scale(self.image, (70, 70))
-			self.fila = 7
-			self.columna = 3
+			self.fila = fila
+			self.columna = columna
 
 		else:
 			self.image = pygame.image.load("Imagenes/Peon_Negro.png")
@@ -96,13 +98,13 @@ class Peon(Pieza):
 
 class Caballo(Pieza):
 
-	def __init__(self, nombre, color):
-		Pieza.__init__(self,nombre,color)
+	def __init__(self, color, fila, columna):
+		Pieza.__init__(self, color)
 		if self.color == "Blanco":
 			self.image = pygame.image.load("Imagenes/Caballo_Blanco.png")
 			self.image = pygame.transform.scale(self.image, (70, 70))
-			self.fila = 7
-			self.columna = 4
+			self.fila = fila
+			self.columna = columna
 
 		else:
 			self.image = pygame.image.load("Imagenes/Caballo_Negro.png")
@@ -165,13 +167,13 @@ class Caballo(Pieza):
 
 class Reina(Pieza):
 
-	def __init__(self, nombre, color):
-		Pieza.__init__(self, nombre, color)
+	def __init__(self, color, fila, columna):
+		Pieza.__init__(self, color)
 		if self.color == "Blanco":
 			self.image = pygame.image.load("Imagenes/Reina_Blanca.png")
 			self.image = pygame.transform.scale(self.image, (70, 70))
-			self.fila = 7
-			self.columna = 5
+			self.fila = fila
+			self.columna = columna
 
 		else:
 			self.image = pygame.image.load("Imagenes/Reina_Negra.png")
@@ -267,30 +269,16 @@ class Reina(Pieza):
 				else:
 					break
 			count -= 1
-		##########################################
-
-		#for count in range(8):
-		#	if count != self.columna:
-		#		self.objetivos.append([self,[self.fila,count]])
-		#	if count != self.fila:
-		#		self.objetivos.append([self,[count,self.columna]])
-		#for counter in range(1,9):
-		#	if self.columna + counter < 8:
-		#		if self.fila - counter  > -1:
-		#			self.objetivos.append([self,[self.fila - counter, self.columna + counter]])
-		#		if self.fila + counter < 8:
-		#			self.objetivos.append([self,[self.fila + counter, self.columna + counter]])
-		#	if self.columna - counter > -1:
-		#		if self.fila - counter  > -1:
-		#			self.objetivos.append([self,[self.fila - counter, self.columna - counter]])
-		#		if self.fila + counter < 8:
-		#			self.objetivos.append([self,[self.fila + counter, self.columna - counter]])
 
 class ChessBoard():
 
 	def __init__(self):
 		self.tablero = []
 		self.piezas = []
+		self.menu = True
+		self.fila_piece = 4
+		self.col_piece = 3
+		
 
 	def draw_chess_board(self, ventana, dimension):
 		Color = 0
@@ -307,6 +295,9 @@ class ChessBoard():
 			Color += 1
 			self.tablero.append(filas)
 			filas = []
+
+		for pieza in self.piezas:
+			pieza[0].draw_piece()
 
 	def find_piece(self, posX, posY):
 		for count in self.piezas:
@@ -334,16 +325,72 @@ class ChessBoard():
 							count[0].move(count[1])
 							count[0].objetivos = []
 
+	def draw_menu(self):
+		Ventana.fill((0,0,0))
+		Ventana.blit(texto,(140,50))
+		peon = pygame.image.load("Imagenes/Peon_Blanco.png")
+		peon = pygame.transform.scale(peon, (70, 70))
+		caballo = pygame.image.load("Imagenes/Caballo_Blanco.png")
+		caballo = pygame.transform.scale(caballo, (70, 70))
+		reina = pygame.image.load("Imagenes/Reina_Blanca.png")
+		reina = pygame.transform.scale(reina, (70, 70))
+		Ventana.blit(peon, (50, 200))
+		Ventana.blit(caballo, (220, 200))
+		Ventana.blit(reina, (400,  200))
+
+
+	def draw_piece(self, posX, posY):
+		if len(chess.piezas) == 5:
+			self.menu = False
+			return
+
+		if posX >= 50 and posX <= 120:
+			if posY >= 200 and posY <= 270:
+				piece = Peon("Blanco",self.fila_piece, self.col_piece)
+		if posX >= 220 and posX <= 290:
+			if posY >= 200 and posY <= 270:
+				piece = Caballo("Blanco",self.fila_piece, self.col_piece)
+		if posX >= 400 and posX <= 470:
+			if posY >= 200 and posY <= 270:
+				piece = Reina("Blanco",self.fila_piece, self.col_piece)
+
+		self.menu = False
+
+	def add_or_replace(self, posx, posy):
+		posicion = 0
+		delete = False
+
+		for count in chess.piezas:
+			coordenadas = count[1]
+			if posx >= coordenadas[0] and posx <= coordenadas[0] + 70:
+				if posy >= coordenadas[1] and posy <= coordenadas[1] + 70:
+					delete = True
+					break
+			posicion += 1
+
+		if delete:
+			chess.piezas.pop(posicion)
+
+
+	def get_filcol(self, posx, posy):
+		set_fila = 0
+		set_columna = 0
+		for filas in chess.tablero:
+			for columnas in filas:
+				if posx >= columnas[0] and posx <= columnas[0] + 70:
+					if posy >= columnas[1] and posy <= columnas[1] + 70:
+						self.fila_piece = set_fila
+						self.col_piece = set_columna
+						print self.fila_piece, self.col_piece
+						return
+				set_columna += 1
+			set_fila += 1
+			set_columna = 0
 
 
 
 chess = ChessBoard()
 chess.draw_chess_board(Ventana, 70)
-peon1 = Peon("peon1","Blanco")
-#peon2 = Peon("peon2","s")
-caballo1 = Caballo("caballo1","Blanco")
-reina1 = Reina("reina1","Blanco")
-
 
 
 
@@ -353,19 +400,31 @@ while True:
 			pygame.quit()
 			sys.exit()
 		elif evento.type == MOUSEBUTTONDOWN:
-			if evento.button == 1:
-				posX,posY = pygame.mouse.get_pos()
+
+			posX,posY = pygame.mouse.get_pos()
+
+			if evento.button == 1 and chess.menu == False:
 				chess.find_piece(posX, posY)
 				chess.find_objetivos(posX, posY)
+
 			elif evento.button == 3:
 				print "Elegir pieza"
+				chess.add_or_replace(posX, posY)
+				chess.get_filcol(posX, posY)
+				
+				if chess.menu:
+					chess.menu = False
+				else:
+					chess.menu = True
 
+			else:
+				chess.draw_piece(posX, posY)
 
-	chess.draw_chess_board(Ventana, 70)
-	peon1.draw_piece()
-	#peon2.draw_piece()
-	caballo1.draw_piece()
-	reina1.draw_piece()
+	if chess.menu:
+		chess.draw_menu()
+	else:
+		chess.draw_chess_board(Ventana, 70)
+		
 
 	if len(chess.piezas) > 0:
 		for count in chess.piezas:
@@ -375,5 +434,6 @@ while True:
 					Ventana.blit(count[0].image_objetivos, (coordenadas[0],coordenadas[1], 70, 70))
 
 	print len(chess.piezas)
+	#print chess.tablero
 	pygame.display.update()
 
