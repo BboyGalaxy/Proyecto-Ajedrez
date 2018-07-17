@@ -83,6 +83,7 @@ class Peon(Pieza):
 			if self.fila > 0:
 				new_fila = self.fila - 1
 
+
 		else:
 			if self.fila < 7:
 				new_fila = self.fila + 1
@@ -91,6 +92,11 @@ class Peon(Pieza):
 			coordenadas = chess.tablero[new_fila][new_columna]
 			
 			self.objetivos.append([self,[new_fila,new_columna]])
+
+			if self.columna > 0:
+				self.objetivos.append([self,[new_fila,new_columna - 1]])
+			if self.columna < 7:
+				self.objetivos.append([self,[new_fila,new_columna + 1]])
 
 
 	
