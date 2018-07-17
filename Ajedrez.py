@@ -393,7 +393,10 @@ class ChessBoard():
 			set_fila += 1
 			set_columna = 0
 
-
+	def change_behavior(self):
+		for count in self.piezas:
+				count[0].finding_move = False
+				count[0].objetivos = []
 
 chess = ChessBoard()
 chess.draw_chess_board(Ventana, 70)
@@ -417,6 +420,7 @@ while True:
 				print "Elegir pieza"
 				chess.add_or_replace(posX, posY)
 				chess.get_filcol(posX, posY)
+				chess.change_behavior()
 				
 				if chess.menu:
 					chess.menu = False
